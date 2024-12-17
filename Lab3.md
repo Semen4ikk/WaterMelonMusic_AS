@@ -7,51 +7,47 @@
 1. Создаем директорию для работы и все нужные файлы, после чего билдим контейнеры <br><br>
 ![Screenshot](images/Screenshot_0.png)
 
-2. Проверяем, что контейнеры были запущены <br><br>
-![Screenshot](images/Screenshot_1.png)
 
-3. Проверяем, что `pg-master` стал лидером, а `pg-slave` — репликой <br><br>
-![Screenshot](images/Screenshot_2.png)
+
+
+2. Проверяем, что `pg-slave` стал лидером, а `pg-master` — репликой. <br><br>
+![Screenshot](images/Screenshot_1.png)
 
 ### Часть 2. Проверяем репликацию
 
 1. Подключаемся к базам данных через pgAdmin по localhost и их портам <br><br>
 
 
-2. Cоздаем таблицу `my_first_replication` с тестовыми столбцами и данными <br><br>
-![Screenshot](images/Screenshot_3.png)
-![Screenshot](images/Screenshot_4.png)
-
-3. Видим, что в `pg-slave` создалась таблица `my_first_replication`, которая содержит такие же данные <br><br>
+2. Cоздаем таблицу `cars` с тестовыми столбцами и данными в `pg-slave` <br><br>
 ![Screenshot](images/Screenshot_5.png)
 
-4. Также пробуем что-то изменить в таблице у `pg-slave` и закономерно получаем ошибку, так как данные закрыты для редактирования <br><br>
-![Screenshot](images/Screenshot_6.png)
-![Screenshot](images/Screenshot_7.png)
-![Screenshot](images/Screenshot_8.png)
+
+3. Видим, что в `pg-master` создалась таблица `cars`, которая содержит такие же данные <br><br>
 ![Screenshot](images/Screenshot_9.png)
 
-5. Не работает
+4. Также пробуем что-то изменить в таблице у `pg-master` и закономерно получаем ошибку, так как она в read only <br><br>
 ![Screenshot](images/Screenshot_10.png)
 
 ### Часть 3. Делаем высокую доступность
-
-1. Успешно подключаемся к `haproxy` <br><br>
+Для балансировки трафика нам нужен  балансировщик. Используем HAproxy
+1. Создаем конфиг и меняем docker-compose<br><br>
+![Screenshot](images/Screenshot_17.png)
+2. Успешно подключаемся к `haproxy` <br><br>
 ![Screenshot](images/Screenshot_11.png)
 
 ### Часть 4. Задание
-1. выключаем сейчас pg_slave (нащшего мастера )<br><br>
-2. видим что теперь наш мастер изменился<br><br>
-![Screenshot](images/Screenshot_12.png)
-3. зукапер заметил что то не так<br><br>
+1. Выключаем  контейнер pg-slave, который сейчас является мастером. Смотрим логи pg-master, postgres_entrypoint и zoo.
+2. зукапер заметил, что что-то не так<br><br>
 ![Screenshot](images/Screenshot_13.png)
-4. Haproxy поyял что что не так <br><br>
+3. Haproxy понял что Мастер упал <br><br>
 ![Screenshot](images/Screenshot_14.png)
-5. pg-master замечает отвалившийся коннект и пытается установить повторное подключение с мастером<br><br>
+4. pg-master замечает отвалившийся коннект и пытается установить повторное подключение с мастером<br><br>
 ![Screenshot](images/Screenshot_15.png)
-6. пробуем записать и запись работает<br><br>
+5. Видим что теперь наш мастер изменился
+![Screenshot](images/Screenshot_12.png)
+6. Чекаем ентрипоинт в бд. Подключение есть, база доступна, запись возможна.<br><br>
 ![Screenshot](images/Screenshot_16.png)
-
+Когда мастер-нода вышла из строя, Patroni несколько раз пытался восстановить соединение. После исчерпания попыток он назначил реплику новой мастер-нодой. HAproxy также зафиксировал сбой и перенаправил запросы на нового мастера. Система автоматически справилась с проблемой, обеспечив работу базы данных: чтение и запись доступны, но запросы теперь обрабатываются другой нодой.
 
 # Ответы на вопросы
 
