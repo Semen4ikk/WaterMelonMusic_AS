@@ -23,7 +23,7 @@
 
 
 3. Видим, что в `pg-master` создалась таблица `cars`, которая содержит такие же данные <br><br>
-![Screenshot](images/Screenshot_9.png)
+![Screenshot](images/Screenshot_8.png)
 
 4. Также пробуем что-то изменить в таблице у `pg-master` и закономерно получаем ошибку, так как она в read only <br><br>
 ![Screenshot](images/Screenshot_10.png)
