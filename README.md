@@ -20,17 +20,4 @@
 ![Screenshot](images/img_4.png)
 
 
-###  Задания
-1. Создаю playbook (file_manager.yml) и запускаю его, чтобы:
-- Создать файл
-- Записать в него данные
-- Поменять содержимое 
-- Удалить
 
-Playbook:
-
-![Screenshot](images/Screenshot_8.png)
-
-Выполнение:
-<br><br>
-![Screenshot](images/Screenshot_9.png)
