@@ -19,6 +19,7 @@
 ![Screenshot](images/img_3.png)
 ![Screenshot](images/img_4.png)
 
+
 ## Задание 1
 Запускаем:
 ![Screenshot](images/img_6.png)
